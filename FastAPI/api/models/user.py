@@ -4,17 +4,14 @@ from sqlalchemy.orm import relationship
 from api.db import Base
 
 
-class Task(Base):
-    __tablename__ = "tasks"
+class User(Base):
+    __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
-    title = Column(String(1024))
-
-    done = relationship("Done", back_populates="task", cascade="delete")
 
 
-class Done(Base):
-    __tablename__ = "dones"
+class Post(Base):
+    __tablename__ = "posts"
 
     id = Column(Integer, ForeignKey("tasks.id"), primary_key=True)
 

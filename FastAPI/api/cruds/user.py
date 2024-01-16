@@ -4,8 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import api.models.task as user_model
-import api.schemas.task as user_schema
+import api.models.user as user_model
+import api.schemas.user as user_schema
 
 
 async def create_user(
