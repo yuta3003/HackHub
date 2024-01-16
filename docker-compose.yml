@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./Docker/nginx/Dockerfile
+    ports:
+      - 443:443
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    tty: true
+    networks:
+      frontend:
+        ipv4_address: 192.168.10.101
+    depends_on:
+      web-ca:
+        condition: service_completed_successfully
+
+  web-ca:
+    build:
+      context: .
+      dockerfile: ./Docker/OMGWTFSSL/Dockerfile
+    platform: linux/x86_64  # M1 Macの場合必要
+    environment:
+      - SSL_SUBJECT="localhost"
+      - SSL_DNS="localhost"
+    volumes:
+      - ./nginx/conf.d/ssl:/certs
+
+  api:
+    build:
+      context: .
+      dockerfile: ./Docker/FastAPI/Dockerfile
+    volumes:
+      - ./FastAPI:/src
+    tty: true
+    networks:
+      frontend:
+        ipv4_address: 192.168.10.102
+      backend:
+        ipv4_address: 192.168.20.102
+  db:
+    image: mysql:8.0
+    platform: linux/x86_64  # M1 Macの場合必要
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'  # rootアカウントをパスワードなしで作成
+      MYSQL_DATABASE: 'prod'  # 初期データベースとしてprodを設定
+      TZ: 'Asia/Tokyo'  # タイムゾーンを日本時間に設定
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password  # MySQL8.0ではデフォルトが"caching_sha2_password"で、ドライバが非対応のため変更
+    ports:
+      - 3306:3306  # ホストマシンのポート33306を、docker内のポート3306に接続する
+    networks:
+      backend:
+        ipv4_address: 192.168.20.103
+
+volumes:
+  mysql_data:
+
+networks:
+  frontend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.10.0/24
+
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.20.0/24
