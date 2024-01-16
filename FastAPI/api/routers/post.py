@@ -3,9 +3,9 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import api.cruds.post as post_crud
+#import api.cruds.post as post_crud
 import api.schemas.post as post_schema
-from api.db import get_db
+#from api.db import get_db
 
 router = APIRouter()
 
@@ -21,6 +21,6 @@ async def create_posts():
 async def update_posts():
     pass
 
-@router.put("/users/{user_id}/post/{post_id}")
+@router.delete("/users/{user_id}/post/{post_id}")
 async def delete_posts():
     pass
