@@ -9,31 +9,18 @@ import api.schemas.post as post_schema
 
 router = APIRouter()
 
-@router.get("/users/{user_id}/post", response_model=post_schema.Post)
-async def list_posts():
-    return [post_schema.Post(id=1, contents="Test Contents")]
+@router.get("/users/{user_id}/posts", response_model=List[post_schema.Post])
+async def list_posts(user_id: int):
+    return [post_schema.Post(user_id=user_id, post_id=1, contents="Test!!")]
 
-@router.post("/users/{user_id}/post", response_model=post_schema.PostCreateResponse)
-async def create_posts(post_bod):
-    pass
+@router.post("/users/{user_id}/posts", response_model=post_schema.PostCreateResponse)
+async def create_posts(user_id: int, post_body: post_schema.PostCreate):
+    return post_schema.PostCreateResponse(post_id=1, **post_body.dict())
 
-@router.put("/users/{user_id}/post/{post_id}", response_model=post_schema.PostCreateResponse)
-async def update_posts():
-    pass
+@router.put("/posts/{post_id}", response_model=post_schema.PostCreateResponse)
+async def update_posts(post_id: int, contents: post_schema.PostCreate):
+    return post_schema.PostCreateResponse(user_id=user_id, **post_body.dict())
 
-@router.delete("/users/{user_id}/post/{post_id}", response_model=None)
-async def delete_posts():
-    pass
-
-
-@router.post("/users", response_model=user_schema.UserCreateResponse)
-async def create_users(user_body: user_schema.UserCreate):
-    return user_schema.UserCreateResponse(id=1, **user_body.dict())
-
-@router.put("/users/{user_id}", response_model=user_schema.UserCreateResponse)
-async def update_users(user_id: int, user_body: user_schema.UserCreate):
-    return user_schema.UserCreateResponse(id=user_id, **user_body.dict())
-
-@router.delete("/users/{user_id}", response_model=None)
-async def delete_users(user_id: int):
+@router.delete("/posts/{post_id}", response_model=None)
+async def delete_posts(post_id: int):
     return

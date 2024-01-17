@@ -15,12 +15,12 @@ class UserBase(BaseModel):
     }
 
 class User(UserBase):
-    id: int
+    user_id: int
     model_config = ConfigDict(from_attributes=True)
 
 class UserCreate(UserBase):
     pass
 
 class UserCreateResponse(UserCreate):
-    id: int
+    user_id: int
     model_config = ConfigDict(from_attributes=True)
