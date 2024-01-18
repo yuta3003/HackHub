@@ -14,8 +14,12 @@ class User(Base):
 
 class Post(Base):
     __tablename__ = "posts"
+    # __table_args__ = (
+    #     PrimaryKeyConstraint('user_id', 'post_id'),
+    # )
 
     post_id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
+    contents = Column(String(256))
 
     user = relationship("User", back_populates="post")
