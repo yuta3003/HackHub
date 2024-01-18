@@ -13,3 +13,15 @@ async def create_post(
     await db.commit()
     await db.refresh(post)
     return post
+
+async def read_post(db: AsyncSession) -> List[Tuple[int, int, str]]:
+    result: Result = await (
+        db.execute(
+            select(
+                model.Post.post_id,
+                model.Post.user_id,
+                model.Post.contents,
+            )
+        )
+    )
+    return result.all()
