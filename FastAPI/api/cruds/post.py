@@ -9,7 +9,7 @@ import api.schemas.post as post_schema
 
 
 async def create_post(
-    user_id: int, db: AsyncSession, post_create: post_schema.PostCreate
+    db: AsyncSession, post_create: post_schema.PostCreate, user_id: int
 ) -> model.Post:
     post = model.Post(user_id=user_id, **post_create.dict())
     db.add(post)
@@ -19,7 +19,7 @@ async def create_post(
     return post
 
 
-async def read_post(user_id: int, db: AsyncSession) -> List[Tuple[int, int, str]]:
+async def read_post(db: AsyncSession, user_id: int) -> List[Tuple[int, int, str]]:
     result: Result = await db.execute(
         select(
             model.Post.post_id,
@@ -39,7 +39,7 @@ async def get_user(db: AsyncSession, user_id: int) -> Optional[model.User]:
 
 
 async def get_post(
-    db: AsyncSession, user_id: int, post_id: int
+    db: AsyncSession, post_id: int, user_id: int
 ) -> Optional[model.Post]:
     result: Result = await db.execute(
         select(model.Post).filter(
@@ -51,7 +51,7 @@ async def get_post(
 
 
 async def update_post(
-    db: AsyncSession, post_create: post_schema.PostCreate, original: model.Post
+    db: AsyncSession, original: model.Post, post_create: post_schema.PostCreate
 ) -> model.Post:
     original.contents = post_create.contents
     db.add(original)

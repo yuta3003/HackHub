@@ -37,7 +37,7 @@ async def get_user(db: AsyncSession, user_id: int) -> Optional[model.User]:
 
 
 async def update_user(
-    db: AsyncSession, user_create: user_schema.UserCreate, original: model.User
+    db: AsyncSession, original: model.User, user_create: user_schema.UserCreate
 ) -> model.User:
     original.user_name = user_create.user_name
     db.add(original)
