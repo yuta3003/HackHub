@@ -17,7 +17,7 @@ class Post(Base):
     __tablename__ = "posts"
 
     post_id = Column(Integer, autoincrement=True, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.user_id"), primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
     contents = Column(String(256))
 
     user = relationship("User", back_populates="post")
