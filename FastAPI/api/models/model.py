@@ -9,6 +9,7 @@ class User(Base):
 
     user_id = Column(Integer, autoincrement=True, primary_key=True)
     user_name = Column(String(1024), nullable=False)
+    password_hash = Column(String(256), nullable=False)
 
     post = relationship("Post", back_populates="user", cascade="delete")
 

@@ -10,6 +10,7 @@ class UserBase(BaseModel):
             "examples": [
                 {
                     "user_name": "anonymous",
+                    "password_hash": "Password Hash",
                 }
             ]
         }
@@ -22,7 +23,7 @@ class User(UserBase):
 
 
 class UserCreate(UserBase):
-    pass
+    password_hash: Optional[str] = Field(None)
 
 
 class UserCreateResponse(UserCreate):
