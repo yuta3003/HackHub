@@ -17,16 +17,16 @@ async def create_user(
     await db.refresh(user)
     return user
 
+
 async def read_user(db: AsyncSession) -> List[Tuple[int, str]]:
-    result: Result = await (
-        db.execute(
-            select(
-                model.User.user_id,
-                model.User.user_name,
-            )
+    result: Result = await db.execute(
+        select(
+            model.User.user_id,
+            model.User.user_name,
         )
     )
     return result.all()
+
 
 async def get_user(db: AsyncSession, user_id: int) -> Optional[model.User]:
     result: Result = await db.execute(
@@ -34,6 +34,7 @@ async def get_user(db: AsyncSession, user_id: int) -> Optional[model.User]:
     )
     user: Optional[Tuple[model.User]] = result.first()
     return user[0] if user else None  # 要素が一つであってもtupleで返却されるので１つ目の要素を取り出す
+
 
 async def update_user(
     db: AsyncSession, user_create: user_schema.UserCreate, original: model.User
@@ -43,6 +44,7 @@ async def update_user(
     await db.commit()
     await db.refresh(original)
     return original
+
 
 async def delete_user(db: AsyncSession, original: model.User) -> None:
     await db.delete(original)

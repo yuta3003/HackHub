@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from api.db import Base
@@ -11,6 +11,7 @@ class User(Base):
     user_name = Column(String(1024), nullable=False)
 
     post = relationship("Post", back_populates="user", cascade="delete")
+
 
 class Post(Base):
     __tablename__ = "posts"
