@@ -2,6 +2,7 @@ from typing import List, Optional, Tuple
 
 from sqlalchemy import select
 from sqlalchemy.engine import Result
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import api.models.model as model
@@ -11,11 +12,15 @@ import api.schemas.user as user_schema
 async def create_user(
     db: AsyncSession, user_create: user_schema.UserCreate
 ) -> model.User:
-    user = model.User(**user_create.dict())
-    db.add(user)
-    await db.commit()
-    await db.refresh(user)
-    return user
+    try:
+        user = model.User(**user_create.dict())
+        db.add(user)
+        await db.commit()
+        await db.refresh(user)
+        return user
+    except IntegrityError as sqlalchemy_error:
+        db.rollback()
+        raise sqlalchemy_error.orig
 
 
 async def read_user(db: AsyncSession) -> List[Tuple[int, str]]:
@@ -34,6 +39,7 @@ async def get_user_by_id(db: AsyncSession, user_id: int) -> Optional[model.User]
     )
     user: Optional[Tuple[model.User]] = result.first()
     return user[0] if user else None  # 要素が一つであってもtupleで返却されるので１つ目の要素を取り出す
+
 
 async def get_user_by_name(db: AsyncSession, user_name: str) -> Optional[model.User]:
     result: Result = await db.execute(
