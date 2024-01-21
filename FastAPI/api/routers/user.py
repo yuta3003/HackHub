@@ -1,5 +1,6 @@
 from typing import List
 
+import pymysql
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,9 +21,13 @@ async def list_users(db: AsyncSession = Depends(get_db)):
 async def create_users(
     user_body: user_schema.UserCreate, db: AsyncSession = Depends(get_db)
 ):
-    password_hash = HashGenerator().hash_string(user_body.password_hash)
-    user_body.password_hash = password_hash
-    return await user_crud.create_user(db=db, user_create=user_body)
+    try:
+        password_hash = HashGenerator().hash_string(user_body.password_hash)
+        user_body.password_hash = password_hash
+        created_user = await user_crud.create_user(db=db, user_create=user_body)
+        return created_user
+    except pymysql.err.IntegrityError:
+        raise HTTPException(status_code=400, detail="User Name is already exists")
 
 
 @router.put("/users/{user_id}", response_model=user_schema.UserCreateResponse)
