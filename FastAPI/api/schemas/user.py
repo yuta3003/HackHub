@@ -10,7 +10,7 @@ class UserBase(BaseModel):
             "examples": [
                 {
                     "user_name": "anonymous",
-                    "password_hash": "Password Hash",
+                    "password_hash": "77cc538aa9b72abb040bb087d1358d58dec3f9b8e817de96af457807d083b5df",
                 }
             ]
         }

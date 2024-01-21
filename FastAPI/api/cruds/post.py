@@ -30,7 +30,7 @@ async def read_post(db: AsyncSession, user_id: int) -> List[Tuple[int, int, str]
     return result.all()
 
 
-async def get_user(db: AsyncSession, user_id: int) -> Optional[model.User]:
+async def get_user_by_id(db: AsyncSession, user_id: int) -> Optional[model.User]:
     result: Result = await db.execute(
         select(model.User).filter(model.User.user_id == user_id)
     )
