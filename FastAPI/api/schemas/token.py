@@ -10,7 +10,7 @@ class Token(BaseModel):
         "json_schema_extra": {
             "examples": [
                 {
-                    "username": "testuser",
+                    "username": "anonymous",
                     "password": "fakepassword",
                 }
             ]

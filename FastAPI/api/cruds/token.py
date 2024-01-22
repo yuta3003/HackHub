@@ -1,12 +1,16 @@
 from fastapi.security import OAuth2PasswordBearer
 
+from sqlalchemy import select
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel
 from typing import Optional
 
+from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
+
+import api.models.model as model
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
@@ -38,3 +42,12 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
     except JWTError:
         raise credentials_exception
     return token_data
+
+async def get_user_by_name(db: AsyncSession, user_name: str) -> Optional[model.User]:
+    result: Result = await db.execute(
+        select(
+			model.User
+		).filter(model.User.user_name == user_name)
+    )
+    user: Optional[Tuple[model.User]] = result.first()
+    return user[0] if user else None  # 要素が一つであってもtupleで返却されるので１つ目の要素を取り出す
