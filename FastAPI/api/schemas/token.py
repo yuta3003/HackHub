@@ -1,12 +1,28 @@
-from pydantic import BaseModel
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Token(BaseModel):
-    access_token: str
-    token_type: str
+    username: Optional[str] = Field(None)
+    password: Optional[str] = Field(None)
+    model_config = {
+        "json_schema_extra": {
+            "examples": [
+                {
+                    "username": "testuser",
+                    "password": "fakepassword",
+                }
+            ]
+        }
+    }
+
+class TokenResponse(BaseModel):
+    access_token: Optional[str] = Field(None)
+    token_type: Optional[str] = Field(None)
 
 class TokenData(BaseModel):
-    username: str | None = None
+    username: Optional[str] = Field(None)
 
 class User(BaseModel):
     username: str
