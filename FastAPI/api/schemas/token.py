@@ -28,4 +28,5 @@ class TokenData(BaseModel):
 
 
 class User(BaseModel):
-    username: str
+    username: Optional[str] = Field(None)
+    password: Optional[str] = Field(None)
