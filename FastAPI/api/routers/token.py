@@ -11,14 +11,6 @@ from api.utils.hash_generator import HashGenerator
 
 router = APIRouter()
 
-# ダミーのユーザーデータベース（実際のアプリケーションではデータベースを使用してください）
-fake_users_db = {
-    "testuser": {
-        "username": "testuser",
-        "hashed_password": "fakehashedpassword",
-    }
-}
-
 
 # ログインエンドポイント
 @router.post("/token", response_model=token_schema.TokenResponse)

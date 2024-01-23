@@ -9,6 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import api.models.model as model
+import api.schemas.token as token_schema
 
 SECRET_KEY = "your-secret-key"
 ALGORITHM = "HS256"
@@ -27,7 +28,7 @@ def create_token(data: dict) -> str:
 
 
 # ユーザー認証関数
-def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
+def get_current_user(token: str = Depends(oauth2_scheme)) -> token_schema.User:
     credentials_exception = HTTPException(
         status_code=401,
         detail="Could not validate credentials",
@@ -41,6 +42,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
+
     return token_data
 
 
