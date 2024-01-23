@@ -1,14 +1,12 @@
-from fastapi.security import OAuth2PasswordBearer
+from datetime import datetime, timedelta
+from typing import Optional
 
-from sqlalchemy import select
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel
-from typing import Optional
-
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, timedelta
 
 import api.models.model as model
 
@@ -18,6 +16,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 # トークン生成関数
 def create_token(data: dict) -> str:
     to_encode = data.copy()
@@ -25,6 +24,7 @@ def create_token(data: dict) -> str:
     to_encode.update({"exp": expires})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
 
 # ユーザー認証関数
 def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
@@ -43,11 +43,10 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> dict:
         raise credentials_exception
     return token_data
 
+
 async def get_user_by_name(db: AsyncSession, user_name: str) -> Optional[model.User]:
     result: Result = await db.execute(
-        select(
-			model.User
-		).filter(model.User.user_name == user_name)
+        select(model.User).filter(model.User.user_name == user_name)
     )
     user: Optional[Tuple[model.User]] = result.first()
     return user[0] if user else None  # 要素が一つであってもtupleで返却されるので１つ目の要素を取り出す

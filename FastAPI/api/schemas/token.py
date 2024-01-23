@@ -17,12 +17,15 @@ class Token(BaseModel):
         }
     }
 
+
 class TokenResponse(BaseModel):
     access_token: Optional[str] = Field(None)
     token_type: Optional[str] = Field(None)
 
+
 class TokenData(BaseModel):
     username: Optional[str] = Field(None)
+
 
 class User(BaseModel):
     username: str

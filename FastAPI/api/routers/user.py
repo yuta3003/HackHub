@@ -24,8 +24,7 @@ async def create_users(
     try:
         password_hash = HashGenerator().hash_string(user_body.password)
         user_create = user_schema.UserCreate(
-            user_name=user_body.user_name,
-            password_hash=password_hash
+            user_name=user_body.user_name, password_hash=password_hash
         )
         created_user = await user_crud.create_user(db=db, user_create=user_create)
         return created_user
@@ -35,7 +34,9 @@ async def create_users(
 
 @router.put("/users/{user_id}", response_model=user_schema.UserCreateResponse)
 async def update_users(
-    user_id: int, user_body: user_schema.UserCreateRequest, db: AsyncSession = Depends(get_db)
+    user_id: int,
+    user_body: user_schema.UserCreateRequest,
+    db: AsyncSession = Depends(get_db),
 ):
     user = await user_crud.get_user_by_id(db=db, user_id=user_id)
     if user is None:

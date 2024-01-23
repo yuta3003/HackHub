@@ -20,6 +20,7 @@ class User(UserBase):
         }
     }
 
+
 class UserCreateRequest(UserBase):
     password: Optional[str] = Field(None)
     model_config = {
@@ -32,6 +33,7 @@ class UserCreateRequest(UserBase):
             ]
         }
     }
+
 
 class UserCreate(UserBase):
     password_hash: Optional[str] = Field(None)
