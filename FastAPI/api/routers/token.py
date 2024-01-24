@@ -6,6 +6,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import api.cruds.token as token_crud
+import api.cruds.user as user_crud
 import api.schemas.token as token_schema
 from api.db import get_db
 # from api.schemas.oauth2 import oauth2_scheme
@@ -19,7 +20,7 @@ router = APIRouter()
 async def login_for_access_token(
     auth_info: token_schema.Token, db: AsyncSession = Depends(get_db)
 ):
-    user = await token_crud.get_user_by_name(db=db, user_name=auth_info.username)
+    user = await user_crud.get_user_by_name(db=db, user_name=auth_info.username)
     password_hash = HashGenerator().hash_string(auth_info.password)
     if user.password_hash == password_hash:
         access_token = token_crud.create_token({"sub": auth_info.username})
