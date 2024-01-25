@@ -37,3 +37,9 @@ async def protected_endpoint(
     user_name: Annotated[str, Depends(token_crud.decode_username_from_token)]
 ):
     return {"message": user_name}
+
+@router.get("/get-current-user", dependencies=[Depends(bearer_scheme)])
+async def get_current_usermodel(
+    user_name: Annotated[user_schema.User, Depends(token_crud.get_current_user)]
+):
+    return {"message": user_name.user_name}

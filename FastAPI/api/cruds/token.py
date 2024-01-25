@@ -41,3 +41,48 @@ async def decode_username_from_token(token: Annotated[str, Depends(oauth2_scheme
         raise credentials_exception
 
     return token_data.username
+
+# リクエストヘッダに含まれるJWTからユーザー情報を取得し、該当するユーザーの情報を返す
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise credentials_exception
+        token_data = token_schema.TokenData(username=username)
+    except JWTError:
+        raise credentials_exception
+    # user = get_user(fake_users_db, username=token_data.username)
+    db = get_db()
+    user = await get_user_by_name(db=db, user_name=token_data.username)
+
+    print("--------------------------------------------------")
+    print("")
+    print("")
+    print(user)
+    print("")
+    print("")
+    print("--------------------------------------------------")
+    if user is None:
+        raise credentials_exception
+    return user
+
+
+async def get_user_by_name(db: AsyncSession, user_name: str) -> Optional[model.User]:
+    result: Result = await db.execute(
+        select(model.User).filter(model.User.user_name == user_name)
+    )
+    user: Optional[Tuple[model.User]] = result.first()
+    return user[0] if user else None  # 要素が一つであってもtupleで返却されるので１つ目の要素を取り出す
+# async def get_user_by_name(db: AsyncSession, user_name: str) -> Optional[model.User]:
+#     async with db.begin():
+#         result = await db.execute(
+#             select(model.User).filter(model.User.user_name == user_name)
+#         )
+#         user: Optional[model.User] = result.scalar_one_or_none()
+#         return user
