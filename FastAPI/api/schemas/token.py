@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -24,7 +24,7 @@ class TokenResponse(BaseModel):
 
 
 class TokenData(BaseModel):
-    username: Optional[str] = Field(None)
+    username: Union[str, None] = None
 
 
 class User(BaseModel):
