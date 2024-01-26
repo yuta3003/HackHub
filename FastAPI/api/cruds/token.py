@@ -43,7 +43,7 @@ async def decode_username_from_token(token: Annotated[str, Depends(oauth2_scheme
     return token_data.username
 
 # リクエストヘッダに含まれるJWTからユーザー情報を取得し、該当するユーザーの情報を返す
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: AsyncSession = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -58,7 +58,8 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     except JWTError:
         raise credentials_exception
     # user = get_user(fake_users_db, username=token_data.username)
-    db = get_db()
+    # db = get_db()
+    # user = await get_user_by_name(db=db, user_name=token_data.username)
     user = await get_user_by_name(db=db, user_name=token_data.username)
 
     print("--------------------------------------------------")
@@ -86,3 +87,11 @@ async def get_user_by_name(db: AsyncSession, user_name: str) -> Optional[model.U
 #         )
 #         user: Optional[model.User] = result.scalar_one_or_none()
 #         return user
+
+# async def get_user_by_name(db: AsyncSession, user_name: str) -> Optional[model.User]:
+#     async with db.begin() as session:
+#         result: Result = await session.execute(
+#             select(model.User).filter(model.User.user_name == user_name)
+#         )
+#         user: Optional[Tuple[model.User]] = result.first()
+#         return user[0] if user else None
