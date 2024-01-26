@@ -1,19 +1,61 @@
-from typing import List
+"""
+User API Router.
+
+This module defines FastAPI routes for managing user-related operations.
+
+Classes:
+    - router: FastAPI APIRouter instance for user operations.
+
+Routes:
+    - GET /users: List all users.
+    - POST /users: Create a new user.
+    - PUT /users/{user_id}: Update an existing user.
+    - DELETE /users/{user_id}: Delete an existing user.
+
+Usage:
+    - Import the 'router' instance.
+    - Include the router in your FastAPI app.
+
+Example:
+    from fastapi import FastAPI
+    from api.routers import user
+
+    app = FastAPI()
+    app.include_router(user.router)
+
+    # Your FastAPI app now includes the user routes.
+"""
+from typing import Annotated, List
 
 import pymysql
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
+import api.cruds.token as token_crud
 import api.cruds.user as user_crud
 import api.schemas.user as user_schema
 from api.db import get_db
 from api.utils.hash_generator import HashGenerator
 
 router = APIRouter()
+bearer_scheme = HTTPBearer()
 
 
 @router.get("/users", response_model=List[user_schema.User])
 async def list_users(db: AsyncSession = Depends(get_db)):
+    """
+    Get a list of all users.
+
+    Args:
+        db (AsyncSession): AsyncSQLAlchemy session.
+
+    Returns:
+        List[user_schema.User]: List of user data.
+
+    Raises:
+        HTTPException: If an error occurs during the operation.
+    """
     return await user_crud.read_user(db=db)
 
 
@@ -21,6 +63,19 @@ async def list_users(db: AsyncSession = Depends(get_db)):
 async def create_users(
     user_body: user_schema.UserCreateRequest, db: AsyncSession = Depends(get_db)
 ):
+    """
+    Create a new user.
+
+    Args:
+        user_body (user_schema.UserCreateRequest): Request body containing user data.
+        db (AsyncSession): AsyncSQLAlchemy session.
+
+    Returns:
+        user_schema.UserCreateResponse: Created user data.
+
+    Raises:
+        HTTPException: If an error occurs during the operation, such as duplicate user name.
+    """
     try:
         password_hash = HashGenerator().hash_string(user_body.password)
         user_create = user_schema.UserCreate(
@@ -32,23 +87,51 @@ async def create_users(
         raise HTTPException(status_code=400, detail="User Name is already exists")
 
 
-@router.put("/users/{user_id}", response_model=user_schema.UserCreateResponse)
+@router.put(
+    "/users/{user_id}",
+    dependencies=[Depends(bearer_scheme)],
+    response_model=user_schema.UserCreateResponse,
+)
 async def update_users(
-    user_id: int,
+    auth_user: Annotated[user_schema.User, Depends(token_crud.get_current_user)],
     user_body: user_schema.UserCreateRequest,
     db: AsyncSession = Depends(get_db),
 ):
-    user = await user_crud.get_user_by_id(db=db, user_id=user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+    """
+    Update an existing user.
 
-    return await user_crud.update_user(db=db, user_create=user_body, original=user)
+    Args:
+        auth_user (Annotated[user_schema.User]): Authenticated user data.
+        user_body (user_schema.UserCreateRequest): Request body containing updated user data.
+        db (AsyncSession): AsyncSQLAlchemy session.
+
+    Returns:
+        user_schema.UserCreateResponse: Updated user data.
+
+    Raises:
+        HTTPException: If an error occurs during the operation.
+    """
+    return await user_crud.update_user(db=db, user_create=user_body, original=auth_user)
 
 
-@router.delete("/users/{user_id}", response_model=None)
-async def delete_users(user_id: int, db: AsyncSession = Depends(get_db)):
-    user = await user_crud.get_user_by_id(db=db, user_id=user_id)
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+@router.delete(
+    "/users/{user_id}", dependencies=[Depends(bearer_scheme)], response_model=None
+)
+async def delete_users(
+    auth_user: Annotated[user_schema.User, Depends(token_crud.get_current_user)],
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Delete an existing user.
 
-    return await user_crud.delete_user(db=db, original=user)
+    Args:
+        auth_user (Annotated[user_schema.User]): Authenticated user data.
+        db (AsyncSession): AsyncSQLAlchemy session.
+
+    Returns:
+        None
+
+    Raises:
+        HTTPException: If an error occurs during the operation.
+    """
+    return await user_crud.delete_user(db=db, original=auth_user)
