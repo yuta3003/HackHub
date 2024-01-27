@@ -39,7 +39,7 @@ Example:
 """
 from typing import List, Optional, Tuple
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.engine import Result
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -124,7 +124,11 @@ async def get_user_by_name(db: AsyncSession, user_name: str) -> Optional[model.U
         Optional[model.User]: Retrieved user data, or None if not found.
     """
     result: Result = await db.execute(
-        select(model.User).filter(model.User.user_name == user_name)
+        select(
+            model.User
+        ).filter(
+            model.User.user_name == user_name
+        )
     )
     user: Optional[Tuple[model.User]] = result.first()
     return user[0] if user else None  # 要素が一つであってもtupleで返却されるので１つ目の要素を取り出す
@@ -144,11 +148,36 @@ async def update_user(
     Returns:
         model.User: Updated user data.
     """
-    original.user_name = user_create.user_name
-    db.add(original)
+    update_stmt = (
+        update(model.User)
+        .where(model.User.user_id == original.user_id)
+        .values(
+            {
+                model.User.user_name: user_create.user_name
+            }
+        )
+    )
+
+    result: result = await db.execute(update_stmt)
+
+    # result: result = await db.execute(
+    #     update(
+    #         model.user
+    #     ).where(
+    #         model.user.user_id == original.user_id
+    #     ).values({
+    #         model.user.user_name: user_create.user_name
+    #     })
+    # )
+    # await db.flush()
     await db.commit()
-    await db.refresh(original)
-    return original
+
+    # 更新されたユーザデータを取得するためにselectクエリを使用
+    updated_user = await db.execute(
+        select(model.User).filter(model.User.user_id == original.user_id)
+    )
+    return updated_user.scalar()
+
 
 
 async def delete_user(db: AsyncSession, original: model.User) -> None:
