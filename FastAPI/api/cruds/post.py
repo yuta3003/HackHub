@@ -64,7 +64,7 @@ async def create_post(
     Returns:
         model.Post: Created post data.
     """
-    post = model.Post(user_id=user_id, **post_create.dict())
+    post = model.Post(user_id=user_id, **post_create.model_dump())
     db.add(post)
     await db.flush()
     await db.commit()

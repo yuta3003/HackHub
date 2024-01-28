@@ -35,38 +35,38 @@ async def async_client() -> AsyncClient:  # Async用のengineとsessionを作成
         yield client
 
 
+@pytest.mark.asyncio
+async def test_create_post(async_client):
+
+    await async_client.post("/users", json={
+        "user_name": "anonymous",
+        "password": "P@ssw0rd"
+    })
+
+    response = await async_client.post("/token", json={
+        "user_name": "anonymous",
+        "password": "P@ssw0rd"
+    })
+
+    response_obj = response.json()
+    access_token = response_obj["access_token"]
+    response = await async_client.post(
+        "/users/1/posts",
+        headers={
+            "Authorization": f"Bearer {access_token}"
+        },
+        json={
+            "contents": "Contents"
+        }
+    )
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert response_obj["contents"] == "Contents"
+    assert response_obj["user_id"] == 1
+    assert response_obj["post_id"] == 1
+
 # @pytest.mark.asyncio
-# async def test_create_post(async_client):
-
-#     await async_client.post("/users", json={
-#         "user_name": "anonymous",
-#         "password": "P@ssw0rd"
-#     })
-
-#     response = await async_client.post("/token", json={
-#         "user_name": "anonymous",
-#         "password": "P@ssw0rd"
-#     })
-
-#     response_obj = response.json()
-#     access_token = response_obj["access_token"]
-#     response = await async_client.put(
-#         "/users/1/posts",
-#         headers={
-#             "Authorization": f"Bearer {access_token}"
-#         },
-#         json={
-#             "contents": "Contents"
-#         }
-#     )
-#     assert response.status_code == starlette.status.HTTP_200_OK
-#     response_obj = response.json()
-#     assert response_obj["contents"] == "Contents"
-#     assert response_obj["user_id"] == 1
-#     assert response_obj["post_id"] == 1
-
-# @pytest.mark.asyncio
-# async def test_read_user(async_client):
+# async def test_read_post(async_client):
 #     await async_client.post(
 #         "/users",
 #         json={
