@@ -135,7 +135,7 @@ async def get_user_by_name(db: AsyncSession, user_name: str) -> Optional[model.U
 
 
 async def update_user(
-    db: AsyncSession, original: model.User, user_create: user_schema.UserCreate
+    db: AsyncSession, original: model.User, user_create: user_schema.UserCreateRequest
 ) -> model.User:
     """
     Update user information in the database.
@@ -148,35 +148,21 @@ async def update_user(
     Returns:
         model.User: Updated user data.
     """
-    update_stmt = (
-        update(model.User)
-        .where(model.User.user_id == original.user_id)
-        .values(
-            {
-                model.User.user_name: user_create.user_name
-            }
+    try:
+        await db.execute(
+            update(model.User)
+            .where(model.User.user_id == original.user_id)
+            .values(**user_create.model_dump())
         )
-    )
 
-    result: result = await db.execute(update_stmt)
+        await db.commit()
 
-    # result: result = await db.execute(
-    #     update(
-    #         model.user
-    #     ).where(
-    #         model.user.user_id == original.user_id
-    #     ).values({
-    #         model.user.user_name: user_create.user_name
-    #     })
-    # )
-    # await db.flush()
-    await db.commit()
+        await db.refresh(original)
+        return original
 
-    # 更新されたユーザデータを取得するためにselectクエリを使用
-    updated_user = await db.execute(
-        select(model.User).filter(model.User.user_id == original.user_id)
-    )
-    return updated_user.scalar()
+    except IntegrityError as sqlalchemy_error:
+        db.rollback()
+        raise sqlalchemy_error.orig
 
 
 

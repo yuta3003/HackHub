@@ -111,7 +111,12 @@ async def update_users(
     Raises:
         HTTPException: If an error occurs during the operation.
     """
-    return await user_crud.update_user(db=db, user_create=user_body, original=auth_user)
+
+    password_hash = HashGenerator().hash_string(user_body.password)
+    user_create = user_schema.UserCreate(
+        user_name=user_body.user_name, password_hash=password_hash
+    )
+    return await user_crud.update_user(db=db, user_create=user_create, original=auth_user)
 
 
 @router.delete(

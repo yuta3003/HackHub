@@ -63,33 +63,31 @@ async def test_read_user(async_client):
     assert response_obj[0]["user_id"] == 1
     assert response_obj[0]["user_name"] == "anonymous"
 
-# @pytest.mark.asyncio
-# async def test_update_user(async_client):
-#     await async_client.post("/users", json={
-#         "user_name": "anonymous",
-#         "password": "P@ssw0rd"
-#     })
+@pytest.mark.asyncio
+async def test_update_user(async_client):
+    await async_client.post("/users", json={
+        "user_name": "anonymous",
+        "password": "P@ssw0rd"
+    })
+    response = await async_client.post("/token", json={
+        "password": "P@ssw0rd",
+        "username": "anonymous"
+    })
 
-#     response = await async_client.post("/token", json={
-#         "password": "P@ssw0rd",
-#         "username": "anonymous"
-#     })
-
-#     response_obj = response.json()
-#     access_token = response_obj["access_token"]
-#     response = await async_client.put(
-#         "/users/1",
-#         headers={"Authorization": f"Bearer {access_token}"},
-#         json={
-#             "user_name": "hoge",
-#             "password": "hoge"
-#         }
-#     )
-#     assert response.status_code == starlette.status.HTTP_200_OK
-#     response_obj = response.json()
-#     assert len(response_obj) == 1
-#     assert response_obj[0]["user_id"] == 1
-#     assert response_obj[0]["user_name"] == "hoge"
+    response_obj = response.json()
+    access_token = response_obj["access_token"]
+    response = await async_client.put(
+        "/users/1",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={
+            "user_name": "hoge",
+            "password": "hoge"
+        }
+    )
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert response_obj["user_id"] == 1
+    assert response_obj["user_name"] == "hoge"
 
 @pytest.mark.asyncio
 async def test_delete_user(async_client):
@@ -112,26 +110,3 @@ async def test_delete_user(async_client):
     assert response.status_code == starlette.status.HTTP_200_OK
     response_obj = response.json()
     assert response_obj is None
-
-# @pytest.mark.asyncio
-# async def test_done_flag(async_client):
-#     response = await async_client.post("/tasks", json={"title": "テストタスク2"})
-#     assert response.status_code == starlette.status.HTTP_200_OK
-#     response_obj = response.json()
-#     assert response_obj["title"] == "テストタスク2"
-
-#     # 完了フラグを立てる
-#     response = await async_client.put("/tasks/1/done")
-#     assert response.status_code == starlette.status.HTTP_200_OK
-
-#     # 既に完了フラグが立っているので400を返却
-#     response = await async_client.put("/tasks/1/done")
-#     assert response.status_code == starlette.status.HTTP_400_BAD_REQUEST
-
-#     # 完了フラグを外す
-#     response = await async_client.delete("/tasks/1/done")
-#     assert response.status_code == starlette.status.HTTP_200_OK
-
-#     # 既に完了フラグが外れているので404を返却
-#     response = await async_client.delete("/tasks/1/done")
-#     assert response.status_code == starlette.status.HTTP_404_NOT_FOUND
