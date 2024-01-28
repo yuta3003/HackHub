@@ -32,13 +32,13 @@ class Token(BaseModel):
     Model representing a token with optional username and password.
     """
 
-    username: Optional[str] = Field(None)
+    user_name: Optional[str] = Field(None)
     password: Optional[str] = Field(None)
     model_config = {
         "json_schema_extra": {
             "examples": [
                 {
-                    "username": "anonymous",
+                    "user_name": "anonymous",
                     "password": "fakepassword",
                 }
             ]
@@ -60,4 +60,4 @@ class TokenData(BaseModel):
     Model representing data extracted from a token.
     """
 
-    username: Union[str, None] = None
+    user_name: Union[str, None] = None

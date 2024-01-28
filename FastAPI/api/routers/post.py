@@ -60,7 +60,7 @@ async def list_posts(user_id: int, db: AsyncSession = Depends(get_db)):
 
 
 @router.post(
-    "/user/{user_id}/posts",
+    "/users/{user_id}/posts",
     dependencies=[Depends(bearer_scheme)],
     response_model=post_schema.PostCreateResponse,
 )
