@@ -58,15 +58,15 @@ async def login_for_access_token(
     Raises:
         HTTPException: If the provided username or password is incorrect.
     """
-    user = await user_crud.get_user_by_name(db=db, user_name=auth_info.username)
+    user = await user_crud.get_user_by_name(db=db, user_name=auth_info.user_name)
     password_hash = HashGenerator().hash_string(auth_info.password)
     if user.password_hash == password_hash:
-        access_token = token_crud.create_access_token(data={"sub": auth_info.username})
+        access_token = token_crud.create_access_token(data={"sub": auth_info.user_name})
         return {
             "access_token": access_token,
             "token_type": "bearer",
         }
-    raise HTTPException(status_code=401, detail="Incorrect username or password")
+    raise HTTPException(status_code=401, detail="Incorrect user_name or password")
 
 
 @router.get("/get-current-user", dependencies=[Depends(bearer_scheme)])
