@@ -48,8 +48,8 @@ async def test_create_token(async_client):
     response = await async_client.post(
         "/token",
         json={
-            "password": "P@ssw0rd",
-            "user_name": "anonymous"
+            "user_name": "anonymous",
+            "password": "P@ssw0rd"
         }
     )
     assert response.status_code == starlette.status.HTTP_200_OK

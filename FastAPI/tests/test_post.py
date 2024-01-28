@@ -44,15 +44,17 @@ async def async_client() -> AsyncClient:  # Async用のengineとsessionを作成
 #     })
 
 #     response = await async_client.post("/token", json={
-#         "password": "P@ssw0rd",
-#         "username": "anonymous"
+#         "user_name": "anonymous",
+#         "password": "P@ssw0rd"
 #     })
 
 #     response_obj = response.json()
 #     access_token = response_obj["access_token"]
 #     response = await async_client.put(
 #         "/users/1/posts",
-#         headers={"Authorization": f"Bearer {access_token}"},
+#         headers={
+#             "Authorization": f"Bearer {access_token}"
+#         },
 #         json={
 #             "contents": "Contents"
 #         }

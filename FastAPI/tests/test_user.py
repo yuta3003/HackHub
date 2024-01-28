@@ -70,8 +70,8 @@ async def test_update_user(async_client):
         "password": "P@ssw0rd"
     })
     response = await async_client.post("/token", json={
-        "password": "P@ssw0rd",
-        "user_name": "anonymous"
+        "user_name": "anonymous",
+        "password": "P@ssw0rd"
     })
 
     response_obj = response.json()
@@ -97,8 +97,8 @@ async def test_delete_user(async_client):
     })
 
     response = await async_client.post("/token", json={
-        "password": "P@ssw0rd",
-        "user_name": "anonymous"
+        "user_name": "anonymous",
+        "password": "P@ssw0rd"
     })
 
     response_obj = response.json()
