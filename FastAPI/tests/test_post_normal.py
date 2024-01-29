@@ -37,25 +37,19 @@ async def async_client() -> AsyncClient:  # Async用のengineとsessionを作成
 
 @pytest.mark.asyncio
 async def test_create_post(async_client):
-    await async_client.post("/users", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
-    response = await async_client.post("/token", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
+    await async_client.post(
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
+    response = await async_client.post(
+        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
 
     response_obj = response.json()
     access_token = response_obj["access_token"]
     response = await async_client.post(
         "/users/1/posts",
-        headers={
-            "Authorization": f"Bearer {access_token}"
-        },
-        json={
-            "contents": "ContentsTest"
-        }
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"contents": "ContentsTest"},
     )
     assert response.status_code == starlette.status.HTTP_200_OK
     response_obj = response.json()
@@ -66,35 +60,25 @@ async def test_create_post(async_client):
 
 @pytest.mark.asyncio
 async def test_read_post(async_client):
-    await async_client.post("/users", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
-    response = await async_client.post("/token", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
+    await async_client.post(
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
+    response = await async_client.post(
+        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
 
     response_obj = response.json()
     access_token = response_obj["access_token"]
     await async_client.post(
         "/users/1/posts",
-        headers={
-            "Authorization": f"Bearer {access_token}"
-        },
-        json={
-            "contents": "ContentsTest1"
-        }
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"contents": "ContentsTest1"},
     )
 
     await async_client.post(
         "/users/1/posts",
-        headers={
-            "Authorization": f"Bearer {access_token}"
-        },
-        json={
-            "contents": "ContentsTest2"
-        }
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"contents": "ContentsTest2"},
     )
 
     response = await async_client.get(
@@ -106,27 +90,22 @@ async def test_read_post(async_client):
     assert response_obj[0]["contents"] == "ContentsTest1"
     assert response_obj[1]["contents"] == "ContentsTest2"
 
+
 @pytest.mark.asyncio
 async def test_update_post(async_client):
-    await async_client.post("/users", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
-    response = await async_client.post("/token", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
+    await async_client.post(
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
+    response = await async_client.post(
+        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
 
     response_obj = response.json()
     access_token = response_obj["access_token"]
     await async_client.post(
         "/users/1/posts",
-        headers={
-            "Authorization": f"Bearer {access_token}"
-        },
-        json={
-            "contents": "ContentsTest1"
-        }
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"contents": "ContentsTest1"},
     )
 
     response = await async_client.get(
@@ -139,12 +118,8 @@ async def test_update_post(async_client):
 
     response = await async_client.put(
         "/users/1/posts/1",
-        headers={
-            "Authorization": f"Bearer {access_token}"
-        },
-        json={
-            "contents": "ContentsPutTest1"
-        }
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"contents": "ContentsPutTest1"},
     )
     assert response.status_code == starlette.status.HTTP_200_OK
     response_obj = response.json()
@@ -160,36 +135,27 @@ async def test_update_post(async_client):
     assert len(response_obj) == 1
     assert response_obj[0]["contents"] == "ContentsPutTest1"
 
+
 @pytest.mark.asyncio
 async def test_delete_post(async_client):
-    await async_client.post("/users", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
-    response = await async_client.post("/token", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
+    await async_client.post(
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
+    response = await async_client.post(
+        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
 
     response_obj = response.json()
     access_token = response_obj["access_token"]
     await async_client.post(
         "/users/1/posts",
-        headers={
-            "Authorization": f"Bearer {access_token}"
-        },
-        json={
-            "contents": "ContentsTest1"
-        }
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"contents": "ContentsTest1"},
     )
     await async_client.post(
         "/users/1/posts",
-        headers={
-            "Authorization": f"Bearer {access_token}"
-        },
-        json={
-            "contents": "ContentsTest2"
-        }
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"contents": "ContentsTest2"},
     )
 
     response = await async_client.get(
@@ -202,9 +168,7 @@ async def test_delete_post(async_client):
 
     response = await async_client.delete(
         "/users/1/posts/1",
-        headers={
-            "Authorization": f"Bearer {access_token}"
-        },
+        headers={"Authorization": f"Bearer {access_token}"},
     )
     assert response.status_code == starlette.status.HTTP_200_OK
     response_obj = response.json()

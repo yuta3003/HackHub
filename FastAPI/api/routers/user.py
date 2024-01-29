@@ -28,6 +28,7 @@ Example:
 from typing import Annotated, List
 
 import pymysql
+import starlette.status
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -84,7 +85,10 @@ async def create_users(
         created_user = await user_crud.create_user(db=db, user_create=user_create)
         return created_user
     except pymysql.err.IntegrityError:
-        raise HTTPException(status_code=400, detail="User Name is already exists")
+        raise HTTPException(
+            status_code=starlette.status.HTTP_400_BAD_REQUEST,
+            detail="User Name is already exists",
+        )
 
 
 @router.put(
@@ -116,7 +120,9 @@ async def update_users(
     user_create = user_schema.UserCreate(
         user_name=user_body.user_name, password_hash=password_hash
     )
-    return await user_crud.update_user(db=db, user_create=user_create, original=auth_user)
+    return await user_crud.update_user(
+        db=db, user_create=user_create, original=auth_user
+    )
 
 
 @router.delete(

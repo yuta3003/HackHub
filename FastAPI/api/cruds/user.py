@@ -71,7 +71,7 @@ async def create_user(
         await db.refresh(user)
         return user
     except IntegrityError as sqlalchemy_error:
-        db.rollback()
+        await db.rollback()
         raise sqlalchemy_error.orig
 
 
@@ -124,11 +124,7 @@ async def get_user_by_name(db: AsyncSession, user_name: str) -> Optional[model.U
         Optional[model.User]: Retrieved user data, or None if not found.
     """
     result: Result = await db.execute(
-        select(
-            model.User
-        ).filter(
-            model.User.user_name == user_name
-        )
+        select(model.User).filter(model.User.user_name == user_name)
     )
     user: Optional[Tuple[model.User]] = result.first()
     return user[0] if user else None  # 要素が一つであってもtupleで返却されるので１つ目の要素を取り出す
@@ -161,9 +157,8 @@ async def update_user(
         return original
 
     except IntegrityError as sqlalchemy_error:
-        db.rollback()
+        await db.rollback()
         raise sqlalchemy_error.orig
-
 
 
 async def delete_user(db: AsyncSession, original: model.User) -> None:

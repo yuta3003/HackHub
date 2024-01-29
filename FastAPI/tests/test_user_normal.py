@@ -37,23 +37,22 @@ async def async_client() -> AsyncClient:  # Async用のengineとsessionを作成
 
 @pytest.mark.asyncio
 async def test_create_user(async_client):
-    response = await async_client.post("/users", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
+    response = await async_client.post(
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
     assert response.status_code == starlette.status.HTTP_200_OK
     response_obj = response.json()
     assert response_obj["user_name"] == "anonymous"
-    assert response_obj["password_hash"] == "b03ddf3ca2e714a6548e7495e2a03f5e824eaac9837cd7f159c67b90fb4b7342"
+    assert (
+        response_obj["password_hash"]
+        == "b03ddf3ca2e714a6548e7495e2a03f5e824eaac9837cd7f159c67b90fb4b7342"
+    )
+
 
 @pytest.mark.asyncio
 async def test_read_user(async_client):
     await async_client.post(
-        "/users",
-        json={
-            "user_name": "anonymous",
-            "password": "P@ssw0rd"
-        }
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
 
     response = await async_client.get("/users")
@@ -63,12 +62,12 @@ async def test_read_user(async_client):
     assert response_obj[0]["user_id"] == 1
     assert response_obj[0]["user_name"] == "anonymous"
 
+
 @pytest.mark.asyncio
 async def test_update_user(async_client):
-    await async_client.post("/users", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
+    await async_client.post(
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
 
     response = await async_client.get("/users")
     assert response.status_code == starlette.status.HTTP_200_OK
@@ -77,20 +76,16 @@ async def test_update_user(async_client):
     assert response_obj[0]["user_id"] == 1
     assert response_obj[0]["user_name"] == "anonymous"
 
-    response = await async_client.post("/token", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
+    response = await async_client.post(
+        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
 
     response_obj = response.json()
     access_token = response_obj["access_token"]
     response = await async_client.put(
         "/users/1",
         headers={"Authorization": f"Bearer {access_token}"},
-        json={
-            "user_name": "hoge",
-            "password": "hoge"
-        }
+        json={"user_name": "hoge", "password": "hoge"},
     )
     assert response.status_code == starlette.status.HTTP_200_OK
     response_obj = response.json()
@@ -104,16 +99,13 @@ async def test_update_user(async_client):
     assert response_obj[0]["user_id"] == 1
     assert response_obj[0]["user_name"] == "hoge"
 
+
 @pytest.mark.asyncio
 async def test_delete_user(async_client):
-    await async_client.post("/users", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
-    await async_client.post("/users", json={
-        "user_name": "hoge",
-        "password": "hoge"
-    })
+    await async_client.post(
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
+    await async_client.post("/users", json={"user_name": "hoge", "password": "hoge"})
 
     response = await async_client.get("/users")
     assert response.status_code == starlette.status.HTTP_200_OK
@@ -122,10 +114,9 @@ async def test_delete_user(async_client):
     assert response_obj[0]["user_id"] == 1
     assert response_obj[0]["user_name"] == "anonymous"
 
-    response = await async_client.post("/token", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
+    response = await async_client.post(
+        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
 
     response_obj = response.json()
     access_token = response_obj["access_token"]

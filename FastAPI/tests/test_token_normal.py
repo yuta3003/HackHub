@@ -38,18 +38,10 @@ async def async_client() -> AsyncClient:  # Async用のengineとsessionを作成
 @pytest.mark.asyncio
 async def test_create_token(async_client):
     await async_client.post(
-        "/users",
-        json={
-            "user_name": "anonymous",
-            "password": "P@ssw0rd"
-        }
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
 
     response = await async_client.post(
-        "/token",
-        json={
-            "user_name": "anonymous",
-            "password": "P@ssw0rd"
-        }
+        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
     assert response.status_code == starlette.status.HTTP_200_OK
