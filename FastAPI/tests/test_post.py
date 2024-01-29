@@ -37,12 +37,10 @@ async def async_client() -> AsyncClient:  # Async用のengineとsessionを作成
 
 @pytest.mark.asyncio
 async def test_create_post(async_client):
-
     await async_client.post("/users", json={
         "user_name": "anonymous",
         "password": "P@ssw0rd"
     })
-
     response = await async_client.post("/token", json={
         "user_name": "anonymous",
         "password": "P@ssw0rd"
@@ -56,14 +54,57 @@ async def test_create_post(async_client):
             "Authorization": f"Bearer {access_token}"
         },
         json={
-            "contents": "Contents"
+            "contents": "ContentsTest"
         }
     )
     assert response.status_code == starlette.status.HTTP_200_OK
     response_obj = response.json()
-    assert response_obj["contents"] == "Contents"
+    assert response_obj["contents"] == "ContentsTest"
     assert response_obj["user_id"] == 1
     assert response_obj["post_id"] == 1
+
+
+@pytest.mark.asyncio
+async def test_read_post(async_client):
+    await async_client.post("/users", json={
+        "user_name": "anonymous",
+        "password": "P@ssw0rd"
+    })
+    response = await async_client.post("/token", json={
+        "user_name": "anonymous",
+        "password": "P@ssw0rd"
+    })
+
+    response_obj = response.json()
+    access_token = response_obj["access_token"]
+    await async_client.post(
+        "/users/1/posts",
+        headers={
+            "Authorization": f"Bearer {access_token}"
+        },
+        json={
+            "contents": "ContentsTest1"
+        }
+    )
+
+    await async_client.post(
+        "/users/1/posts",
+        headers={
+            "Authorization": f"Bearer {access_token}"
+        },
+        json={
+            "contents": "ContentsTest2"
+        }
+    )
+
+    response = await async_client.get(
+        "/users/1/posts",
+    )
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert len(response_obj) == 2
+    assert response_obj[0]["contents"] == "ContentsTest1"
+    assert response_obj[1]["contents"] == "ContentsTest2"
 
 # @pytest.mark.asyncio
 # async def test_read_post(async_client):
