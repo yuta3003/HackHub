@@ -95,6 +95,17 @@ async def test_delete_user(async_client):
         "user_name": "anonymous",
         "password": "P@ssw0rd"
     })
+    await async_client.post("/users", json={
+        "user_name": "hoge",
+        "password": "hoge"
+    })
+
+    response = await async_client.get("/users")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert len(response_obj) == 2
+    assert response_obj[0]["user_id"] == 1
+    assert response_obj[0]["user_name"] == "anonymous"
 
     response = await async_client.post("/token", json={
         "user_name": "anonymous",
@@ -110,3 +121,10 @@ async def test_delete_user(async_client):
     assert response.status_code == starlette.status.HTTP_200_OK
     response_obj = response.json()
     assert response_obj is None
+
+    response = await async_client.get("/users")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert len(response_obj) == 1
+    assert response_obj[0]["user_id"] == 2
+    assert response_obj[0]["user_name"] == "hoge"
