@@ -69,6 +69,14 @@ async def test_update_user(async_client):
         "user_name": "anonymous",
         "password": "P@ssw0rd"
     })
+
+    response = await async_client.get("/users")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert len(response_obj) == 1
+    assert response_obj[0]["user_id"] == 1
+    assert response_obj[0]["user_name"] == "anonymous"
+
     response = await async_client.post("/token", json={
         "user_name": "anonymous",
         "password": "P@ssw0rd"
@@ -88,6 +96,13 @@ async def test_update_user(async_client):
     response_obj = response.json()
     assert response_obj["user_id"] == 1
     assert response_obj["user_name"] == "hoge"
+
+    response = await async_client.get("/users")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert len(response_obj) == 1
+    assert response_obj[0]["user_id"] == 1
+    assert response_obj[0]["user_name"] == "hoge"
 
 @pytest.mark.asyncio
 async def test_delete_user(async_client):
