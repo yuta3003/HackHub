@@ -113,6 +113,8 @@ async def test_delete_user(async_client):
     assert len(response_obj) == 2
     assert response_obj[0]["user_id"] == 1
     assert response_obj[0]["user_name"] == "anonymous"
+    assert response_obj[1]["user_id"] == 2
+    assert response_obj[1]["user_name"] == "hoge"
 
     response = await async_client.post(
         "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}

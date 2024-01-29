@@ -56,6 +56,102 @@ async def test_create_user_unique_constraint(async_client):
     # assert response_obj["password_hash"] == "b03ddf3ca2e714a6548e7495e2a03f5e824eaac9837cd7f159c67b90fb4b7342"
 
 
+@pytest.mark.asyncio
+async def test_update_user_invalid_token(async_client):
+    await async_client.post(
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
+
+    response = await async_client.get("/users")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert len(response_obj) == 1
+    assert response_obj[0]["user_id"] == 1
+    assert response_obj[0]["user_name"] == "anonymous"
+
+    response = await async_client.post(
+        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
+
+    response_obj = response.json()
+    invalid_access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJob2dlIiwiZXhwIjoxNzA2NTA4OTUxfQ.WG3V88hcyfuBq6Tgx01-6bumJK2QWZmO-r-mPecAgBs"
+    response = await async_client.put(
+        "/users/1",
+        headers={"Authorization": f"Bearer {invalid_access_token}"},
+        json={"user_name": "hoge", "password": "hoge"},
+    )
+    assert response.status_code == starlette.status.HTTP_401_UNAUTHORIZED
+
+    response = await async_client.get("/users")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert len(response_obj) == 1
+    assert response_obj[0]["user_id"] == 1
+    assert response_obj[0]["user_name"] == "anonymous"
+
+
+@pytest.mark.asyncio
+async def test_delete_user_invalid_token(async_client):
+    await async_client.post("/users", json={
+        "user_name": "anonymous",
+        "password": "P@ssw0rd"
+    })
+    await async_client.post("/users", json={
+        "user_name": "hoge",
+        "password": "hoge"
+    })
+
+    response = await async_client.get("/users")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert len(response_obj) == 2
+    assert response_obj[0]["user_id"] == 1
+    assert response_obj[0]["user_name"] == "anonymous"
+    assert response_obj[1]["user_id"] == 2
+    assert response_obj[1]["user_name"] == "hoge"
+
+    response = await async_client.post("/token", json={
+        "user_name": "anonymous",
+        "password": "P@ssw0rd"
+    })
+
+    response_obj = response.json()
+    invalid_access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJob2dlIiwiZXhwIjoxNzA2NTA4OTUxfQ.WG3V88hcyfuBq6Tgx01-6bumJK2QWZmO-r-mPecAgBs"
+    response = await async_client.delete(
+        "/users/1",
+        headers={"Authorization": f"Bearer {invalid_access_token}"},
+    )
+    assert response.status_code == starlette.status.HTTP_401_UNAUTHORIZED
+
+    response = await async_client.get("/users")
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert len(response_obj) == 2
+    assert response_obj[0]["user_id"] == 1
+    assert response_obj[0]["user_name"] == "anonymous"
+    assert response_obj[1]["user_id"] == 2
+    assert response_obj[1]["user_name"] == "hoge"
+
+
+# @pytest.mark.asyncio
+# async def test_update_user_invalid_token(async_client):
+#     await async_client.post("/users", json={
+#         "user_name": "anonymous",
+#         "password": "P@ssw0rd"
+#     })
+
+#     response = await async_client.get("/users")
+#     assert response.status_code == starlette.status.HTTP_200_OK
+#     response_obj = response.json()
+#     assert len(response_obj) == 1
+#     assert response_obj[0]["user_id"] == 1
+#     assert response_obj[0]["user_name"] == "anonymous"
+
+#     response = await async_client.post("/token", json={
+#         "user_name": "anonymous",
+#         "password": "P@ssw0rd"
+#     })
+
 # @pytest.mark.asyncio
 # async def test_read_user(async_client):
 #     await async_client.post(
@@ -73,24 +169,6 @@ async def test_create_user_unique_constraint(async_client):
 #     assert response_obj[0]["user_id"] == 1
 #     assert response_obj[0]["user_name"] == "anonymous"
 
-# @pytest.mark.asyncio
-# async def test_update_user(async_client):
-#     await async_client.post("/users", json={
-#         "user_name": "anonymous",
-#         "password": "P@ssw0rd"
-#     })
-
-#     response = await async_client.get("/users")
-#     assert response.status_code == starlette.status.HTTP_200_OK
-#     response_obj = response.json()
-#     assert len(response_obj) == 1
-#     assert response_obj[0]["user_id"] == 1
-#     assert response_obj[0]["user_name"] == "anonymous"
-
-#     response = await async_client.post("/token", json={
-#         "user_name": "anonymous",
-#         "password": "P@ssw0rd"
-#     })
 
 #     response_obj = response.json()
 #     access_token = response_obj["access_token"]
@@ -112,44 +190,4 @@ async def test_create_user_unique_constraint(async_client):
 #     response_obj = response.json()
 #     assert len(response_obj) == 1
 #     assert response_obj[0]["user_id"] == 1
-#     assert response_obj[0]["user_name"] == "hoge"
-
-# @pytest.mark.asyncio
-# async def test_delete_user(async_client):
-#     await async_client.post("/users", json={
-#         "user_name": "anonymous",
-#         "password": "P@ssw0rd"
-#     })
-#     await async_client.post("/users", json={
-#         "user_name": "hoge",
-#         "password": "hoge"
-#     })
-
-#     response = await async_client.get("/users")
-#     assert response.status_code == starlette.status.HTTP_200_OK
-#     response_obj = response.json()
-#     assert len(response_obj) == 2
-#     assert response_obj[0]["user_id"] == 1
-#     assert response_obj[0]["user_name"] == "anonymous"
-
-#     response = await async_client.post("/token", json={
-#         "user_name": "anonymous",
-#         "password": "P@ssw0rd"
-#     })
-
-#     response_obj = response.json()
-#     access_token = response_obj["access_token"]
-#     response = await async_client.delete(
-#         "/users/1",
-#         headers={"Authorization": f"Bearer {access_token}"},
-#     )
-#     assert response.status_code == starlette.status.HTTP_200_OK
-#     response_obj = response.json()
-#     assert response_obj is None
-
-#     response = await async_client.get("/users")
-#     assert response.status_code == starlette.status.HTTP_200_OK
-#     response_obj = response.json()
-#     assert len(response_obj) == 1
-#     assert response_obj[0]["user_id"] == 2
 #     assert response_obj[0]["user_name"] == "hoge"
