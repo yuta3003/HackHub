@@ -99,14 +99,10 @@ async def test_update_user_invalid_token(async_client):
 
 @pytest.mark.asyncio
 async def test_delete_user_invalid_token(async_client):
-    await async_client.post("/users", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
-    await async_client.post("/users", json={
-        "user_name": "hoge",
-        "password": "hoge"
-    })
+    await async_client.post(
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
+    await async_client.post("/users", json={"user_name": "hoge", "password": "hoge"})
 
     response = await async_client.get("/users")
     assert response.status_code == starlette.status.HTTP_200_OK
@@ -117,10 +113,9 @@ async def test_delete_user_invalid_token(async_client):
     assert response_obj[1]["user_id"] == 2
     assert response_obj[1]["user_name"] == "hoge"
 
-    response = await async_client.post("/token", json={
-        "user_name": "anonymous",
-        "password": "P@ssw0rd"
-    })
+    response = await async_client.post(
+        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
 
     response_obj = response.json()
     invalid_access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJob2dlIiwiZXhwIjoxNzA2NTA4OTUxfQ.WG3V88hcyfuBq6Tgx01-6bumJK2QWZmO-r-mPecAgBs"
