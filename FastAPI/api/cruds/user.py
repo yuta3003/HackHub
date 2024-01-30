@@ -50,7 +50,8 @@ import api.schemas.user as user_schema
 from api.exceptions import IntegrityViolationError
 
 
-async def create_user( db: AsyncSession, user_create: user_schema.UserCreate
+async def create_user(
+    db: AsyncSession, user_create: user_schema.UserCreate
 ) -> model.User:
     """
     Create a new user in the database.
