@@ -47,9 +47,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import api.models.model as model
 import api.schemas.user as user_schema
 
+from api.exceptions.integrity_exceptions import IntegrityViolationError
 
-async def create_user(
-    db: AsyncSession, user_create: user_schema.UserCreate
+
+async def create_user( db: AsyncSession, user_create: user_schema.UserCreate
 ) -> model.User:
     """
     Create a new user in the database.
@@ -70,9 +71,9 @@ async def create_user(
         await db.commit()
         await db.refresh(user)
         return user
-    except IntegrityError as sqlalchemy_error:
+    except IntegrityError:
         await db.rollback()
-        raise sqlalchemy_error.orig
+        raise IntegrityViolationError
 
 
 async def read_user(db: AsyncSession) -> List[Tuple[int, str]]:
@@ -156,9 +157,9 @@ async def update_user(
         await db.refresh(original)
         return original
 
-    except IntegrityError as sqlalchemy_error:
+    except IntegrityError:
         await db.rollback()
-        raise sqlalchemy_error.orig
+        raise IntegrityViolationError
 
 
 async def delete_user(db: AsyncSession, original: model.User) -> None:
