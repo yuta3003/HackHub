@@ -46,7 +46,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import api.models.model as model
 import api.schemas.user as user_schema
-
 from api.exceptions import IntegrityViolationError
 
 
