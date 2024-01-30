@@ -39,6 +39,7 @@ import api.cruds.user as user_crud
 import api.schemas.user as user_schema
 from api.db import get_db
 from api.utils.hash_generator import HashGenerator
+from api.exceptions.integrity_exceptions import IntegrityViolationError
 
 router = APIRouter()
 bearer_scheme = HTTPBearer()
@@ -85,16 +86,21 @@ async def create_users(
         )
         created_user = await user_crud.create_user(db=db, user_create=user_create)
         return created_user
-    except pymysql.err.IntegrityError:
+    except IntegrityViolationError:
         raise HTTPException(
             status_code=starlette.status.HTTP_400_BAD_REQUEST,
             detail="User Name is already exists",
         )
-    except sqlite3.IntegrityError:
-        raise HTTPException(
-            status_code=starlette.status.HTTP_400_BAD_REQUEST,
-            detail="User Name is already exists",
-        )
+    # except pymysql.err.IntegrityError:
+    #     raise HTTPException(
+    #         status_code=starlette.status.HTTP_400_BAD_REQUEST,
+    #         detail="User Name is already exists",
+    #     )
+    # except sqlite3.IntegrityError:
+    #     raise HTTPException(
+    #         status_code=starlette.status.HTTP_400_BAD_REQUEST,
+    #         detail="User Name is already exists",
+    #     )
 
 
 @router.put(

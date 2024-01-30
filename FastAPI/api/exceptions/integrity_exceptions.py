@@ -1,0 +1,2 @@
+class IntegrityViolationError(Exception):
+	pass
