@@ -38,8 +38,8 @@ import api.cruds.token as token_crud
 import api.cruds.user as user_crud
 import api.schemas.user as user_schema
 from api.db import get_db
-from api.utils.hash_generator import HashGenerator
-from api.exceptions.integrity_exceptions import IntegrityViolationError
+from api.utils import HashGenerator
+from api.exceptions import IntegrityViolationError
 
 router = APIRouter()
 bearer_scheme = HTTPBearer()
