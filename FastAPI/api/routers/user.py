@@ -25,6 +25,7 @@ Example:
 
     # Your FastAPI app now includes the user routes.
 """
+import sqlite3
 from typing import Annotated, List
 
 import pymysql
@@ -32,14 +33,13 @@ import starlette.status
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
-import sqlite3
 
 import api.cruds.token as token_crud
 import api.cruds.user as user_crud
 import api.schemas.user as user_schema
 from api.db import get_db
-from api.utils.hash_generator import HashGenerator
-from api.exceptions.integrity_exceptions import IntegrityViolationError
+from api.exceptions import IntegrityViolationError
+from api.utils import HashGenerator
 
 router = APIRouter()
 bearer_scheme = HTTPBearer()
