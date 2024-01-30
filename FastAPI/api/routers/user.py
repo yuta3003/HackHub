@@ -91,16 +91,6 @@ async def create_users(
             status_code=starlette.status.HTTP_400_BAD_REQUEST,
             detail="User Name is already exists",
         )
-    # except pymysql.err.IntegrityError:
-    #     raise HTTPException(
-    #         status_code=starlette.status.HTTP_400_BAD_REQUEST,
-    #         detail="User Name is already exists",
-    #     )
-    # except sqlite3.IntegrityError:
-    #     raise HTTPException(
-    #         status_code=starlette.status.HTTP_400_BAD_REQUEST,
-    #         detail="User Name is already exists",
-    #     )
 
 
 @router.put(
