@@ -43,12 +43,19 @@ async def test_create_user_unique_constraint(async_client):
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
 
-    with pytest.raises(sqlite3.IntegrityError) as exc_info:
-        response = await async_client.post(
-            "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
-        )
+    response = await async_client.post(
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
 
-    assert "UNIQUE constraint failed: users.user_name" in str(exc_info.value)
+    assert response.status_code == starlette.status.HTTP_400_BAD_REQUEST
+    response_obj = response.json()
+
+    # with pytest.raises(sqlite3.IntegrityError) as exc_info:
+    #     response = await async_client.post(
+    #         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    #     )
+
+    # assert "UNIQUE constraint failed: users.user_name" in str(exc_info.value)
     # assert resposen == "test"
     # assert response.status_code == starlette.status.HTTP_400_ERR
     # response_obj = response.json()

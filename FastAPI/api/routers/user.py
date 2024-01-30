@@ -32,6 +32,7 @@ import starlette.status
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
+import sqlite3
 
 import api.cruds.token as token_crud
 import api.cruds.user as user_crud
@@ -85,6 +86,11 @@ async def create_users(
         created_user = await user_crud.create_user(db=db, user_create=user_create)
         return created_user
     except pymysql.err.IntegrityError:
+        raise HTTPException(
+            status_code=starlette.status.HTTP_400_BAD_REQUEST,
+            detail="User Name is already exists",
+        )
+    except sqlite3.IntegrityError:
         raise HTTPException(
             status_code=starlette.status.HTTP_400_BAD_REQUEST,
             detail="User Name is already exists",
