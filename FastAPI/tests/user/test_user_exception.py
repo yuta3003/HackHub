@@ -59,21 +59,15 @@ async def test_create_user_unique_constraint(async_client):
     assert response.status_code == starlette.status.HTTP_400_BAD_REQUEST
     response_obj = response.json()
 
-    # with pytest.raises(sqlite3.IntegrityError) as exc_info:
-    #     response = await async_client.post(
-    #         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
-    #     )
-
-    # assert "UNIQUE constraint failed: users.user_name" in str(exc_info.value)
-    # assert resposen == "test"
-    # assert response.status_code == starlette.status.HTTP_400_ERR
-    # response_obj = response.json()
-    # assert response_obj["user_name"] == "anonymous"
-    # assert response_obj["password_hash"] == "b03ddf3ca2e714a6548e7495e2a03f5e824eaac9837cd7f159c67b90fb4b7342"
-
 
 @pytest.mark.asyncio
 async def test_update_user_invalid_token(async_client):
+    """
+    /users/{user_id} エンドポイントの PUT リクエストで無効なトークンを使用した場合のテスト。
+
+    - ユーザーが正常に更新された場合、ステータスコードは 200 OK になる。
+    - 無効なトークンを使用してリクエストした場合、ステータスコードは 401 UNAUTHORIZED になる。
+    """
     await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
