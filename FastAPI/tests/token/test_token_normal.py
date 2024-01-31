@@ -40,6 +40,12 @@ async def async_client() -> AsyncClient:  # Async用のengineとsessionを作成
 
 @pytest.mark.asyncio
 async def test_create_token(async_client):
+    """
+    /token エンドポイントでトークンを作成するテスト。
+
+    - ユーザーが正常に作成された場合、ステータスコードは 200 OK になる。
+    - 有効なユーザー名とパスワードを使用してリクエストすると、有効なトークンが取得される。
+    """
     await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
