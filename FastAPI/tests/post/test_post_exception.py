@@ -76,9 +76,8 @@ async def test_create_post_invalid_token(async_client):
     assert len(response_obj) == 1
     assert response_obj[0]["contents"] == "ContentsTest"
 
-
 @pytest.mark.asyncio
-async def test_read_post(async_client):
+async def test_update_post_invalid_token(async_client):
     await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
@@ -94,6 +93,51 @@ async def test_read_post(async_client):
         json={"contents": "ContentsTest1"},
     )
 
+    response = await async_client.get(
+        "/users/1/posts",
+    )
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert len(response_obj) == 1
+    assert response_obj[0]["contents"] == "ContentsTest1"
+    assert response_obj[0]["user_id"] == 1
+    assert response_obj[0]["post_id"] == 1
+
+
+    invalid_access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJob2dlIiwiZXhwIjoxNzA2NTA4OTUxfQ.WG3V88hcyfuBq6Tgx01-6bumJK2QWZmO-r-mPecAgBs"
+    response = await async_client.put(
+        "/users/1/posts/1",
+        headers={"Authorization": f"Bearer {invalid_access_token}"},
+        json={"contents": "ContentsPutTest1"},
+    )
+    assert response.status_code == starlette.status.HTTP_401_UNAUTHORIZED
+
+    response = await async_client.get(
+        "/users/1/posts",
+    )
+    assert response.status_code == starlette.status.HTTP_200_OK
+    response_obj = response.json()
+    assert len(response_obj) == 1
+    assert response_obj[0]["contents"] == "ContentsTest1"
+    assert response_obj[0]["user_id"] == 1
+    assert response_obj[0]["post_id"] == 1
+
+@pytest.mark.asyncio
+async def test_delete_post_invalid_token(async_client):
+    await async_client.post(
+        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
+    response = await async_client.post(
+        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
+    )
+
+    response_obj = response.json()
+    access_token = response_obj["access_token"]
+    await async_client.post(
+        "/users/1/posts",
+        headers={"Authorization": f"Bearer {access_token}"},
+        json={"contents": "ContentsTest1"},
+    )
     await async_client.post(
         "/users/1/posts",
         headers={"Authorization": f"Bearer {access_token}"},
@@ -109,73 +153,12 @@ async def test_read_post(async_client):
     assert response_obj[0]["contents"] == "ContentsTest1"
     assert response_obj[1]["contents"] == "ContentsTest2"
 
-
-@pytest.mark.asyncio
-async def test_update_post(async_client):
-    await async_client.post(
-        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
-    )
-    response = await async_client.post(
-        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
-    )
-
-    response_obj = response.json()
-    access_token = response_obj["access_token"]
-    await async_client.post(
-        "/users/1/posts",
-        headers={"Authorization": f"Bearer {access_token}"},
-        json={"contents": "ContentsTest1"},
-    )
-
-    response = await async_client.get(
-        "/users/1/posts",
-    )
-    assert response.status_code == starlette.status.HTTP_200_OK
-    response_obj = response.json()
-    assert len(response_obj) == 1
-    assert response_obj[0]["contents"] == "ContentsTest1"
-
-    response = await async_client.put(
+    invalid_access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJob2dlIiwiZXhwIjoxNzA2NTA4OTUxfQ.WG3V88hcyfuBq6Tgx01-6bumJK2QWZmO-r-mPecAgBs"
+    response = await async_client.delete(
         "/users/1/posts/1",
-        headers={"Authorization": f"Bearer {access_token}"},
-        json={"contents": "ContentsPutTest1"},
+        headers={"Authorization": f"Bearer {invalid_access_token}"},
     )
-    assert response.status_code == starlette.status.HTTP_200_OK
-    response_obj = response.json()
-    assert response_obj["user_id"] == 1
-    assert response_obj["post_id"] == 1
-    assert response_obj["contents"] == "ContentsPutTest1"
-
-    response = await async_client.get(
-        "/users/1/posts",
-    )
-    assert response.status_code == starlette.status.HTTP_200_OK
-    response_obj = response.json()
-    assert len(response_obj) == 1
-    assert response_obj[0]["contents"] == "ContentsPutTest1"
-
-
-@pytest.mark.asyncio
-async def test_delete_post(async_client):
-    await async_client.post(
-        "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
-    )
-    response = await async_client.post(
-        "/token", json={"user_name": "anonymous", "password": "P@ssw0rd"}
-    )
-
-    response_obj = response.json()
-    access_token = response_obj["access_token"]
-    await async_client.post(
-        "/users/1/posts",
-        headers={"Authorization": f"Bearer {access_token}"},
-        json={"contents": "ContentsTest1"},
-    )
-    await async_client.post(
-        "/users/1/posts",
-        headers={"Authorization": f"Bearer {access_token}"},
-        json={"contents": "ContentsTest2"},
-    )
+    assert response.status_code == starlette.status.HTTP_401_UNAUTHORIZED
 
     response = await async_client.get(
         "/users/1/posts",
@@ -184,19 +167,4 @@ async def test_delete_post(async_client):
     response_obj = response.json()
     assert len(response_obj) == 2
     assert response_obj[0]["contents"] == "ContentsTest1"
-
-    response = await async_client.delete(
-        "/users/1/posts/1",
-        headers={"Authorization": f"Bearer {access_token}"},
-    )
-    assert response.status_code == starlette.status.HTTP_200_OK
-    response_obj = response.json()
-    assert response_obj is None
-
-    response = await async_client.get(
-        "/users/1/posts",
-    )
-    assert response.status_code == starlette.status.HTTP_200_OK
-    response_obj = response.json()
-    assert len(response_obj) == 1
-    assert response_obj[0]["contents"] == "ContentsTest2"
+    assert response_obj[1]["contents"] == "ContentsTest2"
