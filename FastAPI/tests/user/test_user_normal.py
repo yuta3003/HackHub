@@ -126,6 +126,13 @@ async def test_update_user(async_client):
 
 @pytest.mark.asyncio
 async def test_delete_user(async_client):
+    """
+    /users/{user_id} エンドポイントの DELETE リクエストをテストする。
+
+    - ユーザーの削除が成功することを確認する。
+    - レスポンスのステータスコードが 200 OK であることを確認する。
+    - ユーザーが正常に削除されたことを確認する。
+    """
     await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
