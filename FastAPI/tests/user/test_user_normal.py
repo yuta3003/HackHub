@@ -61,6 +61,13 @@ async def test_create_user(async_client):
 
 @pytest.mark.asyncio
 async def test_read_user(async_client):
+    """
+    /users エンドポイントの GET リクエストをテストする。
+
+    - ユーザーの読み取りが成功することを確認する。
+    - レスポンスのステータスコードが 200 OK であることを確認する。
+    - 正しいユーザー情報が取得されることを確認する。
+    """
     await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
@@ -75,6 +82,13 @@ async def test_read_user(async_client):
 
 @pytest.mark.asyncio
 async def test_update_user(async_client):
+    """
+    /users/{user_id} エンドポイントの PUT リクエストをテストする。
+
+    - ユーザーの更新が成功することを確認する。
+    - レスポンスのステータスコードが 200 OK であることを確認する。
+    - 更新後のユーザー情報が期待通りであることを確認する。
+    """
     await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
