@@ -69,6 +69,12 @@ async def test_create_post(async_client):
 
 @pytest.mark.asyncio
 async def test_read_post(async_client):
+    """
+    /users/{user_id}/posts エンドポイントの GET リクエストをテストする。
+
+    - ユーザーが複数のポストを作成した場合、正しい数のポストが取得されることを確認する。
+    - 取得されたポストの内容が期待通りであることを確認する。
+    """
     await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
