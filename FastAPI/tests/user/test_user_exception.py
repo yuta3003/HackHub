@@ -102,6 +102,12 @@ async def test_update_user_invalid_token(async_client):
 
 @pytest.mark.asyncio
 async def test_delete_user_invalid_token(async_client):
+    """
+    /users/{user_id} エンドポイントの DELETE リクエストで無効なトークンを使用した場合のテスト。
+
+    - ユーザーが正常に削除された場合、ステータスコードは 200 OK になる。
+    - 無効なトークンを使用してリクエストした場合、ステータスコードは 401 UNAUTHORIZED になる。
+    """
     await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
