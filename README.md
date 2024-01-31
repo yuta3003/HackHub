@@ -8,3 +8,18 @@ docker compose run --rm --entrypoint "poetry run pylint api" api
 ```
 
 # テーブル定義
+
+```mermaid
+erDiagram
+  users {
+    int user_id PK
+    string user_name "ユーザー名"
+	string password_hash "パスワードハッシュ"
+  }
+
+  posts {
+	int post_id PK
+	int user_id FK
+	string contents
+  }
+```
