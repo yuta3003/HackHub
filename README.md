@@ -1,12 +1,3 @@
-# memo
-
-```
-docker compose run --rm --entrypoint "poetry run pytest" api
-docker compose run --rm --entrypoint "poetry run black ." api
-docker compose run --rm --entrypoint "poetry run isort ." api
-docker compose run --rm --entrypoint "poetry run pylint api" api
-```
-
 # テーブル定義
 
 ```mermaid
@@ -22,4 +13,19 @@ erDiagram
 	int user_id FK
 	string contents
   }
+```
+# ER図
+
+```mermaid
+erDiagram
+  users ||--o{ posts : "1人のユーザーは複数の投稿を持つ"
+```
+
+# memo
+
+```
+docker compose run --rm --entrypoint "poetry run pytest" api
+docker compose run --rm --entrypoint "poetry run black ." api
+docker compose run --rm --entrypoint "poetry run isort ." api
+docker compose run --rm --entrypoint "poetry run pylint api" api
 ```
