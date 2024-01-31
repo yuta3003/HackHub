@@ -42,6 +42,12 @@ async def async_client() -> AsyncClient:  # Async用のengineとsessionを作成
 
 @pytest.mark.asyncio
 async def test_create_user_unique_constraint(async_client):
+    """
+    /users エンドポイントでユーザーが重複して作成された場合のテスト。
+
+    - ユーザーが正常に作成された場合、ステータスコードは 200 OK になる。
+    - 重複したユーザーが作成された場合、ステータスコードは 400 BAD REQUEST になる。
+    """
     response = await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
