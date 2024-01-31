@@ -40,6 +40,13 @@ async def async_client() -> AsyncClient:  # Async用のengineとsessionを作成
 
 @pytest.mark.asyncio
 async def test_create_user(async_client):
+    """
+    /users エンドポイントの POST リクエストをテストする。
+
+    - ユーザーの作成が成功することを確認する。
+    - レスポンスのステータスコードが 200 OK であることを確認する。
+    - 作成されたユーザー情報が期待通りであることを確認する。
+    """
     response = await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
