@@ -22,16 +22,27 @@ erDiagram
 ```
 
 # Flow
-## ユーザー作成
-
+## sign up
 ```mermaid
 sequenceDiagram
     autonumber
     actor ユーザー
     participant /users
     ユーザー->>/users: postリクエスト
-	Note left of /users: user_name
+	Note left of /users: user_name, password
     /users->>ユーザー: Status Code 200
+```
+
+## login
+```mermaid
+sequenceDiagram
+    autonumber
+    actor ユーザー
+    participant /token
+    ユーザー->>/token: postリクエスト
+	Note left of /token: user_name, password
+    /token->>ユーザー: Status Code 200
+	Note left of /token: access_token, token_type
 ```
 
 # memo
