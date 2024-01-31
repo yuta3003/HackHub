@@ -159,6 +159,12 @@ async def test_update_post(async_client):
 
 @pytest.mark.asyncio
 async def test_delete_post(async_client):
+    """
+    /users/{user_id}/posts/{post_id} エンドポイントの DELETE リクエストをテストする。
+
+    - ポストが正常に削除された場合、ステータスコードは 200 OK になる。
+    - ポストが削除された後、正しい数のポストが残っていることを確認する。
+    """
     await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
