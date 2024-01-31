@@ -108,6 +108,12 @@ async def test_read_post(async_client):
 
 @pytest.mark.asyncio
 async def test_update_post(async_client):
+    """
+    /users/{user_id}/posts/{post_id} エンドポイントの PUT リクエストをテストする。
+
+    - ポストが正常に更新された場合、ステータスコードは 200 OK になる。
+    - 更新後のポストの内容とユーザー情報が期待通りであることを確認する。
+    """
     await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
