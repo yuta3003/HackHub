@@ -40,6 +40,12 @@ async def async_client() -> AsyncClient:  # Async用のengineとsessionを作成
 
 @pytest.mark.asyncio
 async def test_create_post(async_client):
+    """
+    /users/{user_id}/posts エンドポイントの POST リクエストをテストする。
+
+    - ポストが正常に作成された場合、ステータスコードは 200 OK になる。
+    - 作成されたポストの内容とユーザー情報が期待通りであることを確認する。
+    """
     await async_client.post(
         "/users", json={"user_name": "anonymous", "password": "P@ssw0rd"}
     )
