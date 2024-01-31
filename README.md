@@ -21,6 +21,19 @@ erDiagram
   users ||--o{ posts : "1人のユーザーは複数の投稿を持つ"
 ```
 
+# Flow
+## ユーザー作成
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor ユーザー
+    participant /users
+    ユーザー->>/users: postリクエスト
+	Note left of /users: user_name
+    /users->>ユーザー: Status Code 200
+```
+
 # memo
 
 ```
