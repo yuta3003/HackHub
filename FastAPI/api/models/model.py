@@ -72,3 +72,23 @@ class Post(Base):
     contents = Column(String(256))
 
     user = relationship("User", back_populates="post")
+
+
+class Commnents(Base):
+    """
+    Represents the 'posts' table in the database.
+
+    Attributes:
+        post_id (Column): Integer column representing the post ID (primary key).
+        user_id (Column): Integer column representing the foreign key to the 'users' table.
+        contents (Column): String column representing the contents of the post.
+        user (relationship): Many-to-one relationship between Post and User models.
+    """
+
+    __tablename__ = "posts"
+
+    post_id = Column(Integer, autoincrement=True, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.user_id"))
+    contents = Column(String(256))
+
+    user = relationship("User", back_populates="post")
