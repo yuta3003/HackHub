@@ -38,7 +38,7 @@ sequenceDiagram
     autonumber
     actor ユーザー
     participant /users
-    ユーザー->>/users: postリクエスト
+    ユーザー->>/users: post
 	Note left of /users: user_name, password
     /users->>ユーザー: Status Code 200
 ```
@@ -49,10 +49,24 @@ sequenceDiagram
     autonumber
     actor ユーザー
     participant /token
-    ユーザー->>/token: postリクエスト
+    ユーザー->>/token: post
 	Note left of /token: user_name, password
     /token->>ユーザー: Status Code 200
 	Note left of /token: access_token, token_type
+```
+
+## posts
+### 投稿
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor ユーザー
+    participant /users/{user_id}/posts
+    ユーザー->>/users/{user_id}/posts: post
+	Note left of /users/{user_id}/posts: contents
+    /users/{user_id}/posts->>ユーザー: Status Code 200
+	Note left of /users/{user_id}/posts: contents
 ```
 
 # memo
