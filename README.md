@@ -21,6 +21,7 @@ erDiagram
     string comments
   }
 ```
+
 # ER図
 
 ```mermaid
