@@ -5,20 +5,30 @@ erDiagram
   users {
     int user_id PK
     string user_name "ユーザー名"
-	string password_hash "パスワードハッシュ"
+	  string password_hash "パスワードハッシュ"
   }
 
   posts {
-	int post_id PK
-	int user_id FK
-	string contents
+	  int post_id PK
+	  int user_id FK
+	  string contents
+  }
+
+  comments {
+    int comment_id PK
+    int post_id FK
+    int user_id FK
+    string comments
   }
 ```
+
 # ER図
 
 ```mermaid
 erDiagram
   users ||--o{ posts : "1人のユーザーは複数の投稿を持つ"
+  users ||--o{ commnets : "1人のユーザーは複数のコメントを投稿"
+  posts ||--o{ commnets : "1つの投稿に複数のコメントがつく"
 ```
 
 # Flow

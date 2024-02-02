@@ -79,6 +79,7 @@ async def test_create_post_invalid_token(async_client):
     assert len(response_obj) == 1
     assert response_obj[0]["contents"] == "ContentsTest"
 
+
 @pytest.mark.asyncio
 async def test_update_post_invalid_token(async_client):
     await async_client.post(
@@ -106,7 +107,6 @@ async def test_update_post_invalid_token(async_client):
     assert response_obj[0]["user_id"] == 1
     assert response_obj[0]["post_id"] == 1
 
-
     invalid_access_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJob2dlIiwiZXhwIjoxNzA2NTA4OTUxfQ.WG3V88hcyfuBq6Tgx01-6bumJK2QWZmO-r-mPecAgBs"
     response = await async_client.put(
         "/users/1/posts/1",
@@ -124,6 +124,7 @@ async def test_update_post_invalid_token(async_client):
     assert response_obj[0]["contents"] == "ContentsTest1"
     assert response_obj[0]["user_id"] == 1
     assert response_obj[0]["post_id"] == 1
+
 
 @pytest.mark.asyncio
 async def test_delete_post_invalid_token(async_client):
