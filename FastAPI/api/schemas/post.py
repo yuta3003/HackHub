@@ -60,7 +60,6 @@ class PostCreate(PostBase):
     """
 
 
-
 class PostCreateResponse(PostCreate):
     """
     Model representing the response for creating a post.

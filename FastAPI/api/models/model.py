@@ -27,6 +27,7 @@ class User(Base):
         post (relationship): ユーザーが作成した投稿との関連性。
         comment (relationship): ユーザーが作成したコメントとの関連性。
     """
+
     __tablename__ = "users"
 
     user_id = Column(Integer, autoincrement=True, primary_key=True)
@@ -48,6 +49,7 @@ class Post(Base):
         user (relationship): 投稿を作成したユーザーとの関連性。
         comment (relationship): 投稿に対するコメントとの関連性。
     """
+
     __tablename__ = "posts"
 
     post_id = Column(Integer, autoincrement=True, primary_key=True)
@@ -70,6 +72,7 @@ class Comment(Base):
         user (relationship): コメントを作成したユーザーとの関連性。
         post (relationship): コメントが対象とする投稿との関連性。
     """
+
     __tablename__ = "comments"
 
     comment_id = Column(Integer, autoincrement=True, primary_key=True)
