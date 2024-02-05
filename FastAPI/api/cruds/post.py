@@ -46,8 +46,8 @@ from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.models import model
 import api.schemas.post as post_schema
+from api.models import model
 
 
 async def create_post(

@@ -50,12 +50,12 @@ from typing import Annotated, Optional, Tuple
 from fastapi import Depends, HTTPException, status
 from jose import JWTError, jwt
 from sqlalchemy import select
+from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from sqlalchemy.engine import Result
-from api.models import model
 import api.schemas.token as token_schema
 from api.db import get_db
+from api.models import model
 from api.schemas.oauth2 import oauth2_scheme
 
 SECRET_KEY = "your-secret-key"
