@@ -446,6 +446,7 @@ disable=raw-checker-failed,
         R1710, # Inconsistent-return-statements
         W0611, # Unused-import
         W0612, # Unused-variable
+        W0621, # redefined-outer-name
         W3101 # Missing-timeout
 
 # Enable the message, report, category or checker with the given id(s). You can
