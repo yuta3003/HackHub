@@ -45,14 +45,15 @@ Example:
         return {"message": auth_user.user_name}
 """
 from datetime import datetime, timedelta
-from typing import Annotated, Optional
+from typing import Annotated, Optional, Tuple
 
 from fastapi import Depends, HTTPException, status
 from jose import JWTError, jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import api.models.model as model
+from sqlalchemy.engine import Result
+from api.models import model
 import api.schemas.token as token_schema
 from api.db import get_db
 from api.schemas.oauth2 import oauth2_scheme
@@ -107,8 +108,8 @@ async def get_current_user(
         if user_name is None:
             raise credentials_exception
         token_data = token_schema.TokenData(user_name=user_name)
-    except JWTError:
-        raise credentials_exception
+    except JWTError as e:
+        raise credentials_exception from e
 
     user = await get_user_by_name(db=db, user_name=token_data.user_name)
 

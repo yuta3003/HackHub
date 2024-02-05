@@ -59,7 +59,6 @@ class PostCreate(PostBase):
     Model for creating a post with optional contents.
     """
 
-    pass
 
 
 class PostCreateResponse(PostCreate):

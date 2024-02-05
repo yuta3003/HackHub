@@ -44,7 +44,8 @@ from sqlalchemy.engine import Result
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import api.models.model as model
+# import api.models.model as model
+from api.models import model
 import api.schemas.user as user_schema
 from api.exceptions import IntegrityViolationError
 
