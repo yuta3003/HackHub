@@ -86,11 +86,11 @@ async def create_users(
         )
         created_user = await user_crud.create_user(db=db, user_create=user_create)
         return created_user
-    except IntegrityViolationError:
+    except IntegrityViolationError as e:
         raise HTTPException(
             status_code=starlette.status.HTTP_400_BAD_REQUEST,
             detail="User Name is already exists",
-        )
+        ) from e
 
 
 @router.put(

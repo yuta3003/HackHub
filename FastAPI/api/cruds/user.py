@@ -71,9 +71,9 @@ async def create_user(
         await db.commit()
         await db.refresh(user)
         return user
-    except IntegrityError:
+    except IntegrityError as e:
         await db.rollback()
-        raise IntegrityViolationError
+        raise IntegrityViolationError from e
 
 
 async def read_user(db: AsyncSession) -> List[Tuple[int, str]]:
@@ -157,9 +157,9 @@ async def update_user(
         await db.refresh(original)
         return original
 
-    except IntegrityError:
+    except IntegrityError as e:
         await db.rollback()
-        raise IntegrityViolationError
+        raise IntegrityViolationError from e
 
 
 async def delete_user(db: AsyncSession, original: model.User) -> None:
