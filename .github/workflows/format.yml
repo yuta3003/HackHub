@@ -23,6 +23,6 @@ jobs:
         poetry install --no-root
 
     - name: Run Black
-      run: poetry run black .
+      run: poetry run black --check .
     - name: Run isort
-      run: poetry run isort .
+      run: poetry run isort --check .
