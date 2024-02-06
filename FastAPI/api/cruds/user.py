@@ -44,9 +44,9 @@ from sqlalchemy.engine import Result
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.models import model
 import api.schemas.user as user_schema
 from api.exceptions import IntegrityViolationError
+from api.models import model
 
 
 async def create_user(
