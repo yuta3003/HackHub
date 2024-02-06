@@ -11,13 +11,13 @@ def reset_database():
     データベースをリセットする関数。
 
     この関数は現在のデータベースのテーブルを全て削除し、
-    Base.metadataに定義されているテーブルを再作成します。
+    api.models.modelに定義されているテーブルを再作成します。
 
     Args:
-        なし
+        null
 
     Returns:
-        なし
+        null
     """
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
